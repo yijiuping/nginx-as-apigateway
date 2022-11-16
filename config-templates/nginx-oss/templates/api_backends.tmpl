@@ -1,4 +1,4 @@
-# Backup configuration
+# Backend configuration
 #
 {{ $gateway_id := getenv "GATEWAY_IP" "6369a89cf67ffcb560daa2a8" -}}
 {{- $servers := printf "/gateways/%s/http/servers" $gateway_id -}}

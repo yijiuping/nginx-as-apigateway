@@ -30,3 +30,7 @@ API网关作为现代应用的流量入口，重要程度可想而知，其核�
 * config-model：基于Java实现的配置模型参考，可被视为API网关的管理面；
 * config-templates：基于Go Template和Confd实现的API网关配置模板；
 * backend-demo：基于Springboot实现的后端服务测试服务；
+
+## 集成测试依赖
+* etcd：配置数据存储与推送，基于v3测试；
+* confd：监听etcd中配置变化，并执行配置模板渲染NGINX配置；
