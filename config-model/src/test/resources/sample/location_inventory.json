@@ -1,0 +1,63 @@
+{
+  "id": "6369a8a0f67ffcb560daa2ac",
+  "gateway_id": "6369a89cf67ffcb560daa2a8",
+  "server_id": "6369a89cf67ffcb560daa2a9",
+  "group_id": "6369a89cf67ffcb560daa2aa",
+  "uri": "/api/warehouse/inventory",
+  "policy": {
+    "request_valid": {
+      "allow_methods": [
+        "GET"
+      ],
+      "json_body_check": false,
+      "client_max_body_size": "16k"
+    },
+    "rate_limit": {
+      "key": "$binary_remote_addr",
+      "zone_name": "client_ip_10rs",
+      "zone_size": "1m",
+      "rate": "10r/s",
+      "burst": 5,
+      "nodelay": false,
+      "delay_number": 0
+    },
+    "traffic_mirror": {
+      "mirror": "on",
+      "mirror_location": "/api/warehouse/inventory_mirror",
+      "mirror_request_body": "on",
+      "mirror_upstream": "inventory_mirror"
+    },
+    "traffic_route": {
+      "default_upstream": "inventory"
+    },
+    "web_socket": {
+      "web_socket_switch": "off"
+    },
+    "proxy_caching": {
+      "proxy_cache_switch": "off",
+      "proxy_cache_key_zone": "api_cache",
+      "proxy_cache_key_zone_size": "10m",
+      "proxy_cache_max_size": "10g",
+      "proxy_cache_duration": "60m",
+      "proxy_cache_path": "/var/cache/nginx/proxy_cache levels\u003d1:2",
+      "proxy_cache_revalidate": "on",
+      "proxy_cache_min_uses": 3,
+      "proxy_cache_use_stale": "error timeout updating http_500 http_502 http_503 http_504",
+      "proxy_cache_background_update": "on",
+      "proxy_cache_lock": "on",
+      "proxy_cache_valid": "any 10m",
+      "proxy_cache_key": "$scheme$proxy_host$request_uri"
+    },
+    "compression": {
+      "gzip": "off",
+      "gzip_min_length": "1k",
+      "gzip_buffers": "16 64k",
+      "gzip_http_version": "1.1",
+      "gzip_comp_level": 4,
+      "gzip_types": "text/plain application/x-javascript text/css application/xml application/json",
+      "gzip_vary": "on",
+      "gzip_disable": "msie6",
+      "gzip_proxied": "any"
+    }
+  }
+}

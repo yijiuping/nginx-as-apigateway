@@ -1,3 +1,18 @@
+# Mac
+.DS_store
+
+# Editor directories and files
+.idea
+target
+.vscode
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.iml
+/.project
+/.settings/
+
 # Compiled class file
 *.class
 

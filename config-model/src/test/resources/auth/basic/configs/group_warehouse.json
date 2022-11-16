@@ -1,0 +1,12 @@
+{
+  "id": "6369a89cf67ffcb560daa2aa",
+  "gateway_id": "6369a89cf67ffcb560daa2a8",
+  "server_id": "6369a89cf67ffcb560daa2a9",
+  "uri": "/api/warehouse/",
+  "policy": {
+    "basic_auth": {
+      "auth_basic": "Please input Username and Password",
+      "auth_basic_user_file": "/etc/nginx/conf.d/credentials"
+    }
+  }
+}

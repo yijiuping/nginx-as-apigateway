@@ -1,0 +1,73 @@
+{{- $gateway_id := getenv "GATEWAY_IP" "6369a89cf67ffcb560daa2a8" -}}
+{{- $gateway_key := printf "/gateways/%s" $gateway_id -}}
+{{- $gateway := json (getv $gateway_key) -}}
+{{- $policy := $gateway.policy -}}
+
+user  nginx;
+
+worker_processes {{ or $policy.processes.worker_processes "auto" }};
+worker_cpu_affinity {{ or $policy.processes.worker_cpu_affinity "auto"}};
+worker_rlimit_nofile {{ or $policy.processes.worker_rlimit_nofile "655350"}};
+
+
+{{ $error_log_protocol := (or $policy.logging.error_log.error_log_protocol "FILE") -}}
+{{ if eq $error_log_protocol "FILE" -}}
+error_log {{ or $policy.logging.error_log.error_log_file_path "/var/log/nginx/error.log"}} {{ or $policy.logging.error_log.error_log_level "debug" }};
+{{- else -}}
+error_log  syslog:server={{ or $policy.logging.error_log.error_log_server_addr "127.0.0.1"}}:{{or $policy.logging.error_log.error_log_server_port "514"}}  main;
+{{- end}}
+
+pid        /var/run/nginx.pid;
+
+load_module /etc/nginx/modules/ngx_http_js_module.so;
+
+events {
+    worker_connections  {{ or $policy.processes.worker_connections "65535"}};
+}
+
+http {
+    include       /etc/nginx/mime.types;
+    default_type  application/octet-stream;
+
+    {{ if $policy.logging.access_log.access_log_format }}
+    log_format  main {{$policy.logging.access_log.access_log_format}};
+    {{ else }}
+    log_format  main escape=json '{"datetime":"$time_iso8601",'
+        '"remote_addr":"$remote_addr",'
+        '"request":"$request",'
+        '"http_x_forwarded_for":"$http_x_forwarded_for",'
+        '"http_referer":"$http_referer",'
+        '"request_length":"$request_length",'
+        '"http_host":"$http_host",'
+        '"status":"$status",'
+        '"body_bytes_sent":"$body_bytes_sent",'
+        '"request_time":"$request_time",'
+        '"upstream_addr":"$upstream_addr",'
+        '"upstream_status":"$upstream_status",'
+        '"upstream_http_content_type":"$upstream_http_content_type",'
+        '"upstream_response_time":"$upstream_response_time",'
+        '"server_port":"$server_port"'
+        '}';
+    {{- end }}
+
+    {{- $access_log_protocol := (or $policy.logging.access_log.access_log_protocol "FILE") -}}
+    {{ if eq $access_log_protocol "FILE" }}
+    access_log  {{ or $policy.logging.access_log.access_log_file_path "/var/log/nginx/access.log"}}  main;
+    {{else}}
+    access_log  syslog:server={{ or $policy.logging.access_log.access_log_server_addr "127.0.0.1"}}:{{or $policy.logging.access_log.access_log_server_port "514"}}  main;
+    {{end}}
+
+    sendfile        on;
+
+    # Client connection config
+    keepalive_requests         {{ or $policy.client_conn.keepalive_requests "1000"}};
+    keepalive_timeout          {{ or $policy.client_conn.keepalive_timeout "75s"}};
+    keepalive_time             {{ or $policy.client_conn.keepalive_time "1h"}};
+    client_header_timeout      {{ or $policy.client_conn.client_header_timeout "60"}};
+    client_body_timeout        {{ or $policy.client_conn.client_body_timeout "60"}};
+    reset_timedout_connection  {{ or $policy.client_conn.reset_timedout_connection "on"}};
+    send_timeout               {{ or $policy.client_conn.send_timeout "60"}};
+
+    include /etc/nginx/api_gateway.conf; # All API gateway configuration
+    include /etc/nginx/conf.d/*.conf;    # Regular web traffic
+}

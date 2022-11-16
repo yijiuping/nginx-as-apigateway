@@ -1,0 +1,149 @@
+{
+  "id": "6369a89cf67ffcb560daa2a8",
+  "name": "gateway_warehouse",
+  "policy": {
+    "processes": {
+      "worker_connections": "65535",
+      "worker_cpu_affinity": "auto",
+      "worker_processes": "auto",
+      "worker_rlimit_nofile": 655350,
+      "server_tokens": "off"
+    },
+    "management": {
+      "mgmt_port": 8859,
+      "mgmt_metrics": "on",
+      "mgmt_health": "on",
+      "mgmt_allow_cidrs": [
+        "all"
+      ]
+    },
+    "logging": {
+      "access_log": {
+        "access_log_format": "escape\u003djson \u0027{\"datetime\":\"$time_iso8601\",\u0027\n                           \u0027\"remote_addr\":\"$remote_addr\",\u0027\n                           \u0027\"request\":\"$request\",\u0027\n                           \u0027\"http_x_forwarded_for\":\"$http_x_forwarded_for\",\u0027\n                           \u0027\"http_referer\":\"$http_referer\",\u0027\n                           \u0027\"request_length\":\"$request_length\",\u0027\n                           \u0027\"http_host\":\"$http_host\",\u0027\n                           \u0027\"status\":\"$status\",\u0027\n                           \u0027\"body_bytes_sent\":\"$body_bytes_sent\",\u0027\n                           \u0027\"request_time\":\"$request_time\",\u0027\n                           \u0027\"upstream_addr\":\"$upstream_addr\",\u0027\n                           \u0027\"upstream_status\":\"$upstream_status\",\u0027\n                           \u0027\"upstream_http_content_type\":\"$upstream_http_content_type\",\u0027\n                           \u0027\"upstream_response_time\":\"$upstream_response_time\",\u0027\n                           \u0027\"server_port\":\"$server_port\"\u0027\n                           \u0027}\u0027",
+        "access_log_protocol": "FILE",
+        "access_log_file_path": "/var/log/nginx/access.log"
+      },
+      "error_log": {
+        "error_log_level": "debug",
+        "error_log_protocol": "FILE",
+        "error_log_file_path": "/var/log/nginx/error.log"
+      }
+    },
+    "client_conn": {
+      "keepalive_requests": 1000,
+      "keepalive_timeout": "75s",
+      "keepalive_time": "1h",
+      "client_header_timeout": 60,
+      "client_body_timeout": 60,
+      "reset_timedout_connection": "on",
+      "send_timeout": 60
+    },
+    "status_codes": {
+      "statuses": [
+        {
+          "code": 400,
+          "message": "{\"status\":400,\"message\":\"Bad request\"}\\n"
+        },
+        {
+          "code": 401,
+          "message": "{\"status\":401,\"message\":\"Unauthorized\"}\\n"
+        },
+        {
+          "code": 403,
+          "message": "{\"status\":403,\"message\":\"Forbidden\"}\\n"
+        },
+        {
+          "code": 404,
+          "message": "{\"status\":404,\"message\":\"Resource not found\"}\\n"
+        },
+        {
+          "code": 405,
+          "message": "{\"status\":405,\"message\":\"Method not allowed\"}\\n"
+        },
+        {
+          "code": 408,
+          "message": "{\"status\":408,\"message\":\"Request timeout\"}\\n"
+        },
+        {
+          "code": 413,
+          "message": "{\"status\":413,\"message\":\"Payload too large\"}\\n"
+        },
+        {
+          "code": 414,
+          "message": "{\"status\":414,\"message\":\"Request URI too large\"}\\n"
+        },
+        {
+          "code": 415,
+          "message": "{\"status\":415,\"message\":\"Unsupported media type\"}\\n"
+        },
+        {
+          "code": 426,
+          "message": "{\"status\":426,\"message\":\"HTTP request was sent to HTTPS port\"}\\n"
+        },
+        {
+          "code": 429,
+          "message": "{\"status\":429,\"message\":\"API rate limit exceeded\"}\\n"
+        },
+        {
+          "code": 429,
+          "message": "{\"status\":429,\"message\":\"API rate limit exceeded\"}\\n"
+        },
+        {
+          "code": 495,
+          "message": "{\"status\":495,\"message\":\"Client certificate authentication error\"}\\n"
+        },
+        {
+          "code": 496,
+          "message": "{\"status\":496,\"message\":\"Client certificate not presented\"}\\n"
+        },
+        {
+          "code": 497,
+          "message": "{\"status\":497,\"message\":\"HTTP request was sent to mutual TLS port\"}\\n"
+        },
+        {
+          "code": 500,
+          "message": "{\"status\":500,\"message\":\"Server error\"}\\n"
+        },
+        {
+          "code": 501,
+          "message": "{\"status\":501,\"message\":\"Not implemented\"}\\n"
+        },
+        {
+          "code": 502,
+          "message": "{\"status\":502,\"message\":\"Bad gateway\"}\\n"
+        }
+      ]
+    },
+    "credentials": {
+      "users": [
+        {
+          "username": "admin",
+          "password": "$apr1$aP2Dgjk3$QHaaXeHa/T8lYtNBz8z4D0"
+        },
+        {
+          "username": "rob",
+          "password": "$apr1$aP2Dgjk3$QHaaXeHa/T8lYtNBz8z4D0"
+        }
+      ]
+    },
+    "api_key_auth": {
+      "input_type": "HEADER",
+      "api_key_name": "x-api-key",
+      "default_key": "",
+      "api_keys": [
+        {
+          "key": "client_one",
+          "secret": "7B5zIqmRGXmrJTFmKa99vcit"
+        },
+        {
+          "key": "client_two",
+          "secret": "QzVV6y1EmQFbbxOfRCwyJs35"
+        },
+        {
+          "key": "client_six",
+          "secret": "mGcjH8Fv6U9y3BVF9H3Ypb9T"
+        }
+      ]
+    }
+  }
+}

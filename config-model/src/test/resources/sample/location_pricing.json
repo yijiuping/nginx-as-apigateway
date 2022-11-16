@@ -1,0 +1,28 @@
+{
+  "id": "6369a8a0f67ffcb560daa2ae",
+  "gateway_id": "6369a89cf67ffcb560daa2a8",
+  "server_id": "6369a89cf67ffcb560daa2a9",
+  "group_id": "6369a89cf67ffcb560daa2aa",
+  "uri": "/api/warehouse/pricing",
+  "policy": {
+    "request_valid": {
+      "allow_methods": [
+        "GET"
+      ],
+      "json_body_check": true,
+      "client_max_body_size": "16k"
+    },
+    "rate_limit": {
+      "key": "$binary_remote_addr",
+      "zone_name": "client_ip_10rs",
+      "zone_size": "1m",
+      "rate": "10r/s",
+      "burst": 5,
+      "nodelay": false,
+      "delay_number": 0
+    },
+    "traffic_route": {
+      "default_upstream": "pricing"
+    }
+  }
+}

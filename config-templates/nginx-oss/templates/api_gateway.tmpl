@@ -1,0 +1,185 @@
+# API Upstreams
+include api_backends.conf;
+
+# API Keys for Authentication
+include api_keys.conf;
+
+{{- $gateway_id := getenv "GATEWAY_IP" "6369a89cf67ffcb560daa2a8" -}}
+{{- $gateway_key := printf "/gateways/%s" $gateway_id -}}
+{{- $servers := printf "/gateways/%s/http/servers" $gateway_id -}}
+{{- range $index, $server_id := ls $servers -}}
+    {{- $server_key := printf "/gateways/%s/http/servers/%s" $gateway_id $server_id -}}
+    {{- $groups := printf "/gateways/%s/http/servers/%s/groups" $gateway_id $server_id -}}
+    {{- $server := json (getv $server_key) -}}
+    {{- $serverPolicy := $server.policy -}}
+    {{- if $serverPolicy.conn_limit }}
+limit_conn_zone {{or $serverPolicy.conn_limit.key "$binary_remote_addr"}} zone={{or $serverPolicy.conn_limit.zone_name "server_cl_zone"}}:{{or $serverPolicy.conn_limit.zone_size "10m"}};
+    {{- end }}
+    {{- range $group_index, $group_id := ls $groups -}}
+        {{- $group_key := printf "/gateways/%s/http/servers/%s/groups/%s" $gateway_id $server_id $group_id -}}
+        {{- $group := json (getv $group_key) -}}
+        {{- $policy := $group.policy -}}
+        {{- if $policy.rate_limit }}
+limit_req_zone {{or $policy.rate_limit.key "$binary_remote_addr"}} zone={{or $policy.rate_limit.zone_name "grp_rl_zone"}}:{{or $policy.rate_limit.zone_size "10m"}} rate={{or $policy.rate_limit.rate "50000r/s"}};
+        {{- end }}
+        {{- if $policy.proxy_caching }}
+proxy_cache_path {{or $policy.proxy_caching.proxy_cache_path "/var/cache/nginx/proxy_temp"}} keys_zone={{or $policy.proxy_caching.proxy_cache_key_zone "api_cache"}}:{{or $policy.proxy_caching.proxy_cache_key_zone_size "10m"}} max_size={{or $policy.proxy_caching.proxy_cache_max_size "10g"}} inactive={{or $policy.proxy_caching.proxy_cache_duration "60m"}} use_temp_path=off;
+        {{- end }}
+        {{- $locations := printf "/gateways/%s/http/servers/%s/groups/%s/locations" $gateway_id $server_id $group_id -}}
+        {{- range $location_index, $location_id := ls $locations }}
+            {{- $location_key := printf "/gateways/%s/http/servers/%s/groups/%s/locations/%s" $gateway_id $server_id $group_id $location_id -}}
+            {{- $location := json (getv $location_key) }}
+            {{- $locationPolicy := $location.policy }}
+            {{- if $locationPolicy.rate_limit }}
+limit_req_zone {{or $locationPolicy.rate_limit.key "$binary_remote_addr"}} zone={{or $locationPolicy.rate_limit.zone_name "loc_rl_zone"}}:{{or $locationPolicy.rate_limit.zone_size "10m"}} rate={{or $locationPolicy.rate_limit.rate "50000r/s"}};
+            {{- end }}
+            {{- if $locationPolicy.proxy_caching }}
+proxy_cache_path {{or $locationPolicy.proxy_caching.proxy_cache_path "/var/cache/nginx/proxy_temp"}} keys_zone={{or $locationPolicy.proxy_caching.proxy_cache_key_zone "api_cache"}}:{{or $locationPolicy.proxy_caching.proxy_cache_key_zone_size "10m"}} max_size={{or $locationPolicy.proxy_caching.proxy_cache_max_size "10g"}} inactive={{or $locationPolicy.proxy_caching.proxy_cache_duration "60m"}} use_temp_path=off;
+            {{- end }}
+            {{- if $locationPolicy.traffic_route}}
+                {{if $locationPolicy.traffic_route.by_ratio}}
+split_clients "${remote_addr}${server_name}${request_uri}_SPLITS" $upstream_{{$location_id}} {
+                    {{ range $rule_index, $rule := $locationPolicy.traffic_route.ratio_rules }}
+    {{- $rule.ratio}}%    {{$rule.proxy.proxy_upstream}};
+                    {{end}}
+    *    {{$locationPolicy.traffic_route.default_upstream}};
+}
+                 {{- else if $locationPolicy.traffic_route.condition_rules -}}
+
+                    {{- $cond_roule1:= index $locationPolicy.traffic_route.condition_rules 0 -}}
+                    {{- if eq $cond_roule1.condition.type "HEADER" -}}
+map $http_{{$cond_roule1.condition.name}} $upstream_{{$location_id}} {
+                    {{- else if eq $cond_roule1.condition.type "ARG" -}}
+map $arg_{{$cond_roule1.condition.name}} $upstream_{{$location_id}} {
+                    {{- else if eq $cond_roule1.condition.type "COOKIE" -}}
+map $cookie_{{$cond_roule1.condition.name}} $upstream_{{$location_id}} {
+                    {{- else if eq $cond_roule1.condition.type "VAR" -}}
+map ${{$cond_roule1.condition.name}} $upstream_{{$location_id}} {
+                    {{- end -}}
+                    {{- range $cond_rule_index, $cond_rule := $locationPolicy.traffic_route.condition_rules }}
+                        {{$cond_value:= or $cond_rule.condition.value ""}}
+    {{$cond_value}}       {{$cond_rule.proxy.proxy_upstream}};
+                    {{- end }}
+    default   {{$locationPolicy.traffic_route.default_upstream}};
+}
+                {{ end }}
+            {{- end }}
+        {{- end }}
+    {{- end }}
+
+server {
+    {{ if $serverPolicy.logging.access_log }}
+        {{- $access_log:= $serverPolicy.logging.access_log -}}
+        {{- $access_log_protocol := (or $access_log.access_log_protocol "FILE") -}}
+        {{ if eq $access_log_protocol "FILE" }}
+     access_log  {{ or $access_log.access_log_file_path "/var/log/nginx/access.log"}}  main;
+        {{else}}
+     access_log  syslog:server={{ or $access_log.access_log_server_addr "127.0.0.1"}}:{{or $access_log.access_log_server_port "514"}}  main;
+        {{end}}
+    {{- end }}
+
+    {{- if $serverPolicy.ssl_offload }}
+    listen {{or $serverPolicy.ssl_offload.https_port "443"}} ssl {{- if eq $serverPolicy.ssl_offload.http2 "on" }} http2{{- end -}};
+    {{- end }}
+
+    listen {{ or $server.port "80"}} default_server;
+    server_name {{ $server.name }};
+
+    {{- if $serverPolicy.conn_limit }}
+    limit_conn {{or $serverPolicy.conn_limit.zone_name "server_cl_zone"}} {{or $serverPolicy.conn_limit.conn "65535"}};
+    {{- end }}
+
+    {{ if $serverPolicy.redirect }}
+        {{ if $serverPolicy.redirect.ssl_redirect }}
+    if ($scheme = 'http') {
+        return 301 https://$host$request_uri;
+    }
+        {{ end }}
+    {{ end }}
+
+    {{ if $serverPolicy.ip_access_control }}
+        # Access Control with client address
+        {{- range $item_index, $item := $serverPolicy.ip_access_control.items }}
+    {{$item.type}} {{$item.address}};
+        {{ end }}
+    {{- end }}
+
+    {{ if $serverPolicy.client_buffer }}
+    # Client buffering
+    proxy_request_buffering {{or $serverPolicy.client_buffer.proxy_request_buffering "on"}};
+    client_header_buffer_size {{or $serverPolicy.client_buffer.client_header_buffer_size "1k"}};
+    large_client_header_buffers {{or $serverPolicy.client_buffer.large_client_header_buffers "4 8k"}};
+    client_body_buffer_size {{or $serverPolicy.client_buffer.client_body_buffer_size "16k"}};
+    {{- end }}
+
+    {{ if $serverPolicy.proxy_buffer }}
+    # Server buffering
+    proxy_buffering {{or $serverPolicy.proxy_buffer.proxy_buffering "on"}};
+
+    proxy_buffer_size {{or $serverPolicy.proxy_buffer.proxy_buffer_size "8k"}};
+    proxy_buffers {{or $serverPolicy.proxy_buffer.proxy_buffers "8 8k"}};
+    proxy_busy_buffers_size {{or $serverPolicy.proxy_buffer.proxy_busy_buffers_size "16k"}};
+    proxy_temp_file_write_size {{or $serverPolicy.proxy_buffer.proxy_temp_file_write_size "16k"}};
+    proxy_max_temp_file_size {{or $serverPolicy.proxy_buffer.proxy_max_temp_file_size "1024m"}};
+    {{- end }}
+
+    {{ if $serverPolicy.ssl_offload }}
+    # TLS config
+    ssl_certificate      {{or $serverPolicy.ssl_offload.ssl_certificate "/etc/nginx/ssl/server.crt"}};
+    ssl_certificate_key  {{or $serverPolicy.ssl_offload.ssl_certificate_key "/etc/nginx/ssl/sever.key"}};
+    ssl_session_cache    {{or $serverPolicy.ssl_offload.ssl_session_cache "shared:SSL:10m"}};
+    ssl_session_timeout  {{or $serverPolicy.ssl_offload.ssl_session_timeout "5m"}};
+    ssl_ciphers          {{or $serverPolicy.ssl_offload.ssl_ciphers "HIGH:!aNULL:!MD5"}};
+    ssl_protocols        {{or $serverPolicy.ssl_offload.ssl_protocols "TLSv1.2 TLSv1.3"}};
+    {{- end }}
+
+    # Backend health check for upstreams
+    include healthcheck.conf;
+
+    # API definitions, one per file
+    include api_conf.d/*.conf;
+
+    # Error responses
+    error_page 404 = @404;         # Invalid paths are treated as bad requests
+    proxy_intercept_errors on;     # Do not send backend errors to the client
+    include api_json_errors.conf;  # API client friendly JSON error responses
+    default_type application/json; # If no content-type then assume JSON
+
+    # API key validation
+    location = /_validate_apikey {
+        internal;
+
+    {{- $gateway := json (getv $gateway_key) -}}
+    {{- $api_key_auth := $gateway.policy.api_key_auth -}}
+    {{- $input_type := or $gateway.policy.api_key_auth.input_type "HEADER" -}}
+    {{- $key_name := or $gateway.policy.api_key_auth.api_key_name "x-api-key" }}
+        if ({{ if eq $input_type "HEADER"}}$http_{{$key_name}}{{else}}$arg_{{$key_name}}{{end}} = "") {
+            return 401; # Unauthorized
+        }
+        if ($api_client_name = "") {
+            return 403; # Forbidden
+        }
+
+        return 204; # OK (no content)
+    }
+
+    # Dummy location used to populate $request_body for JSON validation
+    location /_get_request_body {
+        return 204;
+    }
+}
+{{- end }}
+
+js_import json_validation.js;
+js_set $json_validated json_validation.parseRequestBody;
+
+server {
+    listen 127.0.0.1:10415;
+    return 415; # Unsupported media type
+    include api_json_errors.conf;
+}
+
+# Health check result check
+match health_status {
+    status 200;
+}

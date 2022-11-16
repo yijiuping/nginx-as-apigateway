@@ -1,0 +1,16 @@
+{
+  "id": "6369a89cf67ffcb560daa2a9",
+  "gateway_id": "6369a89cf67ffcb560daa2a8",
+  "name": "server_warehouse",
+  "port": 80,
+  "policy": {
+    "ip_access_control":{
+      "items": [
+        {
+          "type": "deny",
+          "address": "192.168.51.1"
+        }
+      ]
+    }
+  }
+}

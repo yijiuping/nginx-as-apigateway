@@ -1,0 +1,42 @@
+# Backup configuration
+#
+{{ $gateway_id := getenv "GATEWAY_IP" "6369a89cf67ffcb560daa2a8" -}}
+{{- $servers := printf "/gateways/%s/http/servers" $gateway_id -}}
+{{- range $index, $server_id := ls $servers -}}
+    {{- $server_key := printf "/gateways/%s/http/servers/%s" $gateway_id $server_id -}}
+    {{- $upstreams := printf "/gateways/%s/http/servers/%s/upstreams" $gateway_id $server_id -}}
+    {{- $server := json (getv $server_key) -}}
+    {{- range $upstream_index, $upstream_id := ls $upstreams -}}
+        {{- $upstream_key := printf "/gateways/%s/http/servers/%s/upstreams/%s" $gateway_id $server_id $upstream_id -}}
+        {{- $upstream := json (getv $upstream_key) -}}
+        {{ $members := $upstream.members }}
+upstream {{$upstream.name}} {
+    zone {{$upstream.name}} 64k;
+        {{- if $upstream.policy.load_balance }}
+            {{ $algorithm:= (or $upstream.policy.load_balance.algorithm "ROUND_ROBIN") }}
+            {{- if eq $algorithm "RANDOM" }}
+    random;
+            {{- else if eq $algorithm "IP_HASH"}}
+    ip_hash;
+            {{- else if eq $algorithm "HASH" }}
+    hash {{$upstream.policy.load_balance.hash_key}};
+            {{- else if eq $algorithm "CONSISTENT_HASH" }}
+    hash {{$upstream.policy.load_balance.hash_key}} consistent;
+            {{- else if eq $algorithm "LEAST_CONN" }}
+    least_conn;
+            {{- else if eq $algorithm "LEAST_TIME" }}
+    least_time header;
+            {{- end -}}
+        {{ end }}
+
+        {{- range $member_index, $member := $members }}
+    server {{$member.address}} weight={{or $member.weight "1"}}  max_conns={{or $upstream.policy.upstream_conn.max_conns "0"}}  max_fails={{or $upstream.policy.upstream_conn.max_fails "3"}}  fail_timeout={{or $upstream.policy.upstream_conn.fail_timeout "5"}} ;
+        {{- end }}
+
+    keepalive {{or $upstream.policy.upstream_conn.keepalive "32"}};
+    keepalive_timeout {{or $upstream.policy.upstream_conn.keepalive_timeout "60s"}};
+    keepalive_requests {{or $upstream.policy.upstream_conn.keepalive_requests "1000"}};
+    keepalive_time {{or $upstream.policy.upstream_conn.keepalive_time "1h"}};
+}
+    {{ end }}
+{{- end }}

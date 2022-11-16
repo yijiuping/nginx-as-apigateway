@@ -1,0 +1,25 @@
+{
+  "id": "6369a89cf67ffcb560daa2a8",
+  "name": "gateway_warehouse",
+  "policy": {
+    "api_key_auth": {
+      "input_type": "HEADER",
+      "api_key_name": "apikey",
+      "default_key": "",
+      "api_keys": [
+        {
+          "key": "client_one",
+          "secret": "7B5zIqmRGXmrJTFmKa99vcit"
+        },
+        {
+          "key": "client_two",
+          "secret": "QzVV6y1EmQFbbxOfRCwyJs35"
+        },
+        {
+          "key": "client_six",
+          "secret": "mGcjH8Fv6U9y3BVF9H3Ypb9T"
+        }
+      ]
+    }
+  }
+}

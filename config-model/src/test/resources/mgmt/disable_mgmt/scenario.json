@@ -1,0 +1,53 @@
+{
+  "name": "basic",
+  "cases": [
+    {
+      "name": "case1",
+      "request": {
+        "scheme": "http",
+        "port": "8859",
+        "method": "GET",
+        "uri": "/metrics"
+      },
+      "response": {
+        "status": "404"
+      }
+    },
+    {
+      "name": "case1",
+      "request": {
+        "scheme": "http",
+        "port": "8859",
+        "method": "GET",
+        "uri": "/api"
+      },
+      "response": {
+        "status": "404"
+      }
+    },
+    {
+      "name": "case1",
+      "request": {
+        "scheme": "http",
+        "port": "8859",
+        "method": "GET",
+        "uri": "/health"
+      },
+      "response": {
+        "status": "404"
+      }
+    },
+    {
+      "name": "case1",
+      "request": {
+        "scheme": "http",
+        "port": "8859",
+        "method": "GET",
+        "uri": "/dashboard.html"
+      },
+      "response": {
+        "status": "404"
+      }
+    }
+  ]
+}

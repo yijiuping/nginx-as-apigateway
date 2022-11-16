@@ -1,0 +1,27 @@
+{
+  "id": "6369a8a0f67ffcb560daa2ac",
+  "gateway_id": "6369a89cf67ffcb560daa2a8",
+  "server_id": "6369a89cf67ffcb560daa2a9",
+  "group_id": "6369a89cf67ffcb560daa2aa",
+  "uri": "/api/warehouse/inventory",
+  "policy": {
+    "traffic_route": {
+      "default_upstream": "inventory",
+      "by_ratio": true,
+      "ratio_rules": [
+        {
+          "ratio": 50,
+          "proxy": {
+            "proxy_upstream": "inventory"
+          }
+        },
+        {
+          "ratio": 50,
+          "proxy": {
+            "proxy_upstream": "inventory2"
+          }
+        }
+      ]
+    }
+  }
+}

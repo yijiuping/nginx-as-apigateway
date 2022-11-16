@@ -1,0 +1,15 @@
+{
+  "id": "6369a89cf67ffcb560daa2a8",
+  "name": "gateway_warehouse",
+  "policy": {
+    "client_conn": {
+      "keepalive_requests": 10000,
+      "keepalive_timeout": "75s",
+      "keepalive_time": "1h",
+      "client_header_timeout": 60,
+      "client_body_timeout": 60,
+      "reset_timedout_connection": "on",
+      "send_timeout": 60
+    }
+  }
+}

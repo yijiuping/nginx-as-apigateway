@@ -1,0 +1,18 @@
+{
+  "id": "6369a89cf67ffcb560daa2a8",
+  "name": "gateway_warehouse",
+  "policy": {
+    "credentials": {
+      "users": [
+        {
+          "username": "admin",
+          "password": "$apr1$aP2Dgjk3$QHaaXeHa/T8lYtNBz8z4D0"
+        },
+        {
+          "username": "rob",
+          "password": "$apr1$aP2Dgjk3$QHaaXeHa/T8lYtNBz8z4D0"
+        }
+      ]
+    }
+  }
+}

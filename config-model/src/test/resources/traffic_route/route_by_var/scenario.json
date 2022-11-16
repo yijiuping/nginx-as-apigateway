@@ -1,0 +1,29 @@
+{
+  "name": "client_conn",
+  "cases": [
+    {
+      "name": "case1",
+      "request": {
+        "scheme": "http",
+        "port": "80",
+        "method": "GET",
+        "uri": "/api/warehouse/inventory"
+      },
+      "response": {
+        "status": "200"
+      }
+    },
+    {
+      "name": "case2",
+      "request": {
+        "scheme": "http",
+        "port": "80",
+        "method": "GET",
+        "uri": "/api/warehouse/inventory"
+      },
+      "response": {
+        "status": "200"
+      }
+    }
+  ]
+}

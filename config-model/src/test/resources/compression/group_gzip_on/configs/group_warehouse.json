@@ -1,0 +1,11 @@
+{
+  "id": "6369a89cf67ffcb560daa2aa",
+  "gateway_id": "6369a89cf67ffcb560daa2a8",
+  "server_id": "6369a89cf67ffcb560daa2a9",
+  "uri": "/api/warehouse/",
+  "policy": {
+    "compression": {
+      "gzip": "off"
+    }
+  }
+}

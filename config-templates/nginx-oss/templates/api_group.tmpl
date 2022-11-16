@@ -1,0 +1,177 @@
+{{- $gateway_id := getenv "GATEWAY_IP" "6369a89cf67ffcb560daa2a8" -}}
+{{- $servers := printf "/gateways/%s/http/servers" $gateway_id -}}
+{{- range $index, $server_id := ls $servers -}}
+    {{- $server_key := printf "/gateways/%s/http/servers/%s" $gateway_id $server_id -}}
+    {{- $groups := printf "/gateways/%s/http/servers/%s/groups" $gateway_id $server_id -}}
+    {{- $server := json (getv $server_key) -}}
+    {{- range $group_index, $group_id := ls $groups -}}
+        {{- $group_key := printf "/gateways/%s/http/servers/%s/groups/%s" $gateway_id $server_id $group_id -}}
+        {{- $group := json (getv $group_key) -}}
+        {{- $policy := $group.policy -}}
+        {{- if $policy.uri_rewrite -}}
+            {{- range $uri_map_index, $uri_map := $policy.uri_rewrite.uri_maps }}
+rewrite {{$uri_map.from}} {{$uri_map.to}};
+            {{- end }}
+rewrite_log off;
+        {{- end  }}
+
+location {{$group.uri}} {
+
+    # Keepalive connection
+    proxy_http_version 1.1;
+    proxy_set_header Connection '';
+    proxy_set_header Host      $host:$server_port;
+    proxy_set_header X-Real-IP $remote_addr;
+    proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+
+        {{- if $policy.logging.access_log }}
+    # Logging
+            {{- $access_log_protocol := (or $policy.logging.access_log.access_log_protocol "FILE") -}}
+            {{ if eq $access_log_protocol "FILE" }}
+    access_log  {{ or $policy.logging.access_log.access_log_file_path "/var/log/nginx/access.log"}}  main;
+            {{else}}
+    access_log  syslog:server={{ or $policy.logging.access_log.access_log_server_addr "127.0.0.1"}}:{{or $policy.logging.access_log.access_log_server_port "514"}}  main;
+            {{end}}
+        {{- end }}
+
+        {{ if $policy.api_key_auth }}
+    # API Key authentication
+    auth_request /_validate_apikey;
+        {{- end }}
+
+        {{- if $policy.basic_auth }}
+    # HTTP Basic authentication, need to restart nginx service to enforce
+    auth_basic           "{{or $policy.basic_auth.auth_basic "Please input username and password"}}";
+    auth_basic_user_file  {{or $policy.basic_auth.auth_basic_user_file "/etc/nginx/conf.d/credentials"}};
+        {{- end }}
+
+        {{- if $policy.request_valid.client_max_body_size }}
+    # Limit the body size
+    client_max_body_size {{or $policy.request_valid.client_max_body_size "10m"}};
+        {{- end }}
+
+        {{- if $policy.rate_limit }}
+    # Rate limiting
+    limit_req zone={{or $policy.rate_limit.zone_name "grp_rl_zone"}};
+    limit_req_status 429;
+    limit_req_log_level {{or $policy.rate_limit.log_level "info"}};
+        {{- end }}
+
+        {{- if $policy.compression }}
+    # Compression
+    gzip {{or $policy.compression.gzip "off"}};
+    gzip_min_length {{or $policy.compression.gzip_min_length "1k"}};
+    gzip_buffers {{or $policy.compression.gzip_buffers "16 64k"}};
+    gzip_http_version {{or $policy.compression.gzip_http_version "1.1"}};
+    gzip_comp_level {{or $policy.compression.gzip_comp_level "4"}};
+    gzip_types {{or $policy.compression.gzip_types "text/plain application/x-javascript text/css application/xml application/json"}};
+    gzip_vary {{or $policy.compression.gzip_vary "on"}};
+    gzip_disable {{or $policy.compression.gzip_disable "msie6"}};
+    gzip_proxied {{or $policy.compression.gzip_proxied "any"}};
+        {{- end }}
+
+        {{- $locations := printf "/gateways/%s/http/servers/%s/groups/%s/locations" $gateway_id $server_id $group_id -}}
+        {{ range $location_index, $location_id := ls $locations }}
+            {{- $location_key := printf "/gateways/%s/http/servers/%s/groups/%s/locations/%s" $gateway_id $server_id $group_id $location_id -}}
+            {{ $location := json (getv $location_key) }}
+    location {{$location.uri}} {
+            {{- $locationPolicy := $location.policy }}
+
+            {{- if $locationPolicy.rate_limit }}
+        # Rate limiting
+        limit_req zone={{or $locationPolicy.rate_limit.zone_name "grp_rl_zone"}};
+        limit_req_status 429;
+        limit_req_log_level {{or $locationPolicy.rate_limit.log_level "info"}};
+            {{- end }}
+
+            {{- if $locationPolicy.compression }}
+        # Compression
+        gzip {{or $locationPolicy.compression.gzip "off"}};
+        gzip_min_length {{or $locationPolicy.compression.gzip_min_length "1k"}};
+        gzip_buffers {{or $locationPolicy.compression.gzip_buffers "16 64k"}};
+        gzip_http_version {{or $locationPolicy.compression.gzip_http_version "1.1"}};
+        gzip_comp_level {{or $locationPolicy.compression.gzip_comp_level "4"}};
+        gzip_types {{or $locationPolicy.compression.gzip_types "text/plain application/x-javascript text/css application/xml application/json"}};
+        gzip_vary {{or $locationPolicy.compression.gzip_vary "on"}};
+        gzip_disable {{or $locationPolicy.compression.gzip_disable "msie6"}};
+        gzip_proxied {{or $locationPolicy.compression.gzip_proxied "any"}};
+            {{- end }}
+
+            {{- if $locationPolicy.request_valid.allow_methods }}
+        # HTTP Method Validation
+        limit_except {{ range $method_index, $allow_method:= $locationPolicy.request_valid.allow_methods }}{{$allow_method}} {{end}} {
+            deny all;
+        }
+            {{- end }}
+
+            {{- if $locationPolicy.traffic_route.ratio_rules }}
+        set $upstream $upstream_{{$location_id}};
+            {{- else if $locationPolicy.traffic_route.condition_rules }}
+        set $upstream $upstream_{{$location_id}};
+            {{- else }}
+        set $upstream {{$locationPolicy.traffic_route.default_upstream}};
+            {{- end }}
+
+            {{$json_body_check := or $locationPolicy.request_valid.json_body_check false }}
+            {{- if $json_body_check}}
+        # Body Validation
+        mirror /_get_request_body;
+        client_body_in_single_buffer on;
+        client_body_buffer_size      16k;
+
+        proxy_pass http://$json_validated;
+            {{- end }}
+
+        error_page 403 = @405;
+
+            {{ $proxy_cache_switch := (or $locationPolicy.proxy_caching.proxy_cache_switch "off") }}
+            {{- if  eq $proxy_cache_switch "on" }}
+        # Enable API Response cache. TIPS: should start nginx with non root user
+        proxy_cache {{or $locationPolicy.proxy_caching.proxy_cache_key_zone "api_cache"}};
+        proxy_cache_revalidate {{or $locationPolicy.proxy_caching.proxy_cache_revalidate "on"}};
+        proxy_cache_min_uses {{or $locationPolicy.proxy_caching.proxy_cache_min_uses "3"}};
+        proxy_cache_use_stale {{or $locationPolicy.proxy_caching.proxy_cache_use_stale "error timeout updating http_500 http_502 http_503 http_504"}};
+        proxy_cache_background_update {{or $locationPolicy.proxy_caching.proxy_cache_background_update "on"}};
+        proxy_cache_lock {{or $locationPolicy.proxy_caching.proxy_cache_lock "on"}};
+
+        proxy_cache_valid {{or $locationPolicy.proxy_caching.proxy_cache_valid "any 10m"}};
+        proxy_cache_key {{or $locationPolicy.proxy_caching.proxy_cache_key "$scheme$proxy_host$request_uri"}};
+
+        proxy_ignore_headers X-Accel-Expires Expires Cache-Control Set-Cookie;
+        add_header X-Proxy-Cache $upstream_cache_status;
+            {{- end }}
+
+            {{- if $locationPolicy.traffic_mirror }}
+                {{ if eq $locationPolicy.traffic_mirror.mirror "on" }}
+        # Traffic Mirroring
+        mirror {{or $locationPolicy.traffic_mirror.mirror_location ""}};
+        mirror_request_body {{or $locationPolicy.traffic_mirror.mirror_request_body ""}};
+                {{ end }}
+            {{- end }}
+            {{- if eq $json_body_check false }}
+        proxy_pass http://$upstream;
+            {{- end }}
+
+    }
+            {{ if $locationPolicy.traffic_mirror }}
+                {{ if eq $locationPolicy.traffic_mirror.mirror "on" }}
+    location = {{$locationPolicy.traffic_mirror.mirror_location}} {
+        internal;
+        proxy_pass http://{{$locationPolicy.traffic_mirror.mirror_upstream}}$request_uri;
+
+        proxy_pass_request_body on;
+        proxy_http_version 1.1;
+        proxy_set_header Connection '';
+        proxy_set_header X-Original-URI $request_uri;
+        proxy_set_header Content-Length "";
+        proxy_set_header Host      $host:$server_port;
+        proxy_set_header X-Real-IP $remote_addr;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+    }
+                {{ end }}
+            {{ end }}
+        {{- end }}
+    return 404; # Catch-all
+}
+    {{- end }}
+{{- end }}

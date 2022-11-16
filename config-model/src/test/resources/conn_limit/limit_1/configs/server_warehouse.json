@@ -1,0 +1,15 @@
+{
+  "id": "6369a89cf67ffcb560daa2a9",
+  "gateway_id": "6369a89cf67ffcb560daa2a8",
+  "name": "server_warehouse",
+  "port": 80,
+  "policy": {
+    "conn_limit": {
+      "key": "$server_name",
+      "zone_name": "perserver",
+      "zone_size": "10m",
+      "conn": "1",
+      "log_level": "info"
+    }
+  }
+}

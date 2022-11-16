@@ -1,0 +1,27 @@
+{
+  "id": "6369a8a0f67ffcb560daa2ac",
+  "gateway_id": "6369a89cf67ffcb560daa2a8",
+  "server_id": "6369a89cf67ffcb560daa2a9",
+  "group_id": "6369a89cf67ffcb560daa2aa",
+  "uri": "/api/warehouse/inventory",
+  "policy": {
+    "traffic_route": {
+      "default_upstream": "inventory"
+    },
+    "proxy_caching": {
+      "proxy_cache_switch": "on",
+      "proxy_cache_key_zone": "api_cache",
+      "proxy_cache_key_zone_size": "10m",
+      "proxy_cache_max_size": "10g",
+      "proxy_cache_duration": "60m",
+      "proxy_cache_path": "/var/cache/nginx/proxy_cache levels\u003d1:2",
+      "proxy_cache_revalidate": "on",
+      "proxy_cache_min_uses": 3,
+      "proxy_cache_use_stale": "error timeout updating http_500 http_502 http_503 http_504",
+      "proxy_cache_background_update": "on",
+      "proxy_cache_lock": "on",
+      "proxy_cache_valid": "any 10m",
+      "proxy_cache_key": "$scheme$proxy_host$request_uri"
+    }
+  }
+}

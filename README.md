@@ -1,2 +1,11 @@
-# nginx-as-apigateway
-Deploy NGINX as API Gateway
+# 将NGINX打造成功能强大的API网关
+
+## 功能架构设计
+
+## 技术架构设计
+
+## 配置模型设计
+
+## 配置模板开发
+
+## 集成测试

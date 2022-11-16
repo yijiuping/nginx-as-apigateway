@@ -1,0 +1,20 @@
+{
+  "name": "client_conn",
+  "cases": [
+    {
+      "name": "case1",
+      "request": {
+        "scheme": "http",
+        "port": "80",
+        "method": "GET",
+        "uri": "/api/warehouse/inventory",
+        "basic_auth_username": "admin",
+        "basic_auth_password": "admin"
+      },
+      "response": {
+        "status": "200"
+      },
+      "pre_action": "RESTART_NGINX"
+    }
+  ]
+}

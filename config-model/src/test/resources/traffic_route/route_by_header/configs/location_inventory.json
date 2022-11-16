@@ -1,0 +1,37 @@
+{
+  "id": "6369a8a0f67ffcb560daa2ac",
+  "gateway_id": "6369a89cf67ffcb560daa2a8",
+  "server_id": "6369a89cf67ffcb560daa2a9",
+  "group_id": "6369a89cf67ffcb560daa2aa",
+  "uri": "/api/warehouse/inventory",
+  "policy": {
+    "traffic_route": {
+      "default_upstream": "inventory",
+      "by_ratio": false,
+      "condition_rules": [
+        {
+          "condition": {
+            "type": "HEADER",
+            "name": "version",
+            "op": "EQUAL",
+            "value": "1"
+          },
+          "proxy": {
+            "proxy_upstream": "inventory"
+          }
+        },
+        {
+          "condition": {
+            "type": "HEADER",
+            "name": "version",
+            "op": "EQUAL",
+            "value": "2"
+          },
+          "proxy": {
+            "proxy_upstream": "inventory2"
+          }
+        }
+      ]
+    }
+  }
+}

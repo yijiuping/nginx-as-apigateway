@@ -1,0 +1,29 @@
+{
+  "id": "6369a89cf67ffcb560daa2af",
+  "gateway_id": "6369a89cf67ffcb560daa2a8",
+  "server_id": "6369a89cf67ffcb560daa2a9",
+  "name": "inventory_mirror",
+  "is_mirror": false,
+  "is_canary": false,
+  "members": [
+    {
+      "address": "192.168.51.7:8080",
+      "weight": 1
+    }
+  ],
+  "policy": {
+    "load_balance": {
+      "algorithm": "RANDOM",
+      "hash_key": "$remote_addr"
+    },
+    "upstream_conn": {
+      "keepalive": 32,
+      "keepalive_requests": 1000,
+      "keepalive_time": "1h",
+      "keepalive_timeout": "60s",
+      "fail_timeout": 5,
+      "max_fails": 3,
+      "max_conns": 0
+    }
+  }
+}

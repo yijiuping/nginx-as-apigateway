@@ -1,0 +1,12 @@
+{
+  "id": "6369a89cf67ffcb560daa2af",
+  "gateway_id": "6369a89cf67ffcb560daa2a8",
+  "server_id": "6369a89cf67ffcb560daa2a9",
+  "name": "inventory2",
+  "members": [
+    {
+      "address": "192.168.51.7:8080",
+      "weight": 1
+    }
+  ]
+}

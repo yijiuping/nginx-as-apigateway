@@ -1,0 +1,16 @@
+{
+  "id": "6369a89cf67ffcb560daa2a8",
+  "name": "gateway_warehouse",
+  "policy": {
+    "management": {
+      "mgmt_port": 8859,
+      "mgmt_dashboard": "on",
+      "mgmt_metrics": "on",
+      "mgmt_health": "on",
+      "mgmt_api": "on",
+      "mgmt_allow_cidrs": [
+        "all"
+      ]
+    }
+  }
+}

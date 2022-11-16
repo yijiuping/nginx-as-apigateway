@@ -1,0 +1,17 @@
+{
+  "name": "basic",
+  "cases": [
+    {
+      "name": "case1",
+      "request": {
+        "scheme": "http",
+        "port": "80",
+        "method": "GET",
+        "uri": "/api/warehouse/inventory"
+      },
+      "response": {
+        "status": "200"
+      }
+    }
+  ]
+}

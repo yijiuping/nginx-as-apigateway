@@ -1,0 +1,51 @@
+{{- $gateway_id := getenv "GATEWAY_IP" "6369a89cf67ffcb560daa2a8" -}}
+{{- $gateway_key := printf "/gateways/%s" $gateway_id -}}
+{{- $gateway := json (getv $gateway_key) -}}
+{{- $policy := $gateway.policy -}}
+
+# Dashboard, API, Metrics and Health Check
+#
+{{ $mgmt_metrics := (or $policy.management.mgmt_metrics "on") }}
+{{ if eq $mgmt_metrics  "on" }}
+js_import /usr/share/nginx-plus-module-prometheus/prometheus.js;
+{{ end -}}
+
+server {
+    listen {{ or $policy.management.mgmt_port "8859"}};
+    access_log off;
+
+{{ $mgmt_dashboard := (or $policy.management.mgmt_dashboard "on") }}
+{{ if eq $mgmt_dashboard  "on" }}
+    root /usr/share/nginx/html;
+    location  = /dashboard.html {
+    }
+{{ end -}}
+
+{{ if eq $mgmt_metrics  "on" }}
+    location = /metrics {
+        default_type text/html;
+        js_content prometheus.metrics;
+    }
+{{ end -}}
+
+{{ $mgmt_health := (or $policy.management.mgmt_health "on") }}
+{{ if eq $mgmt_health  "on" }}
+    location = /health {
+       default_type application/json;
+       return 200 '{"status" : "OK"}';
+    }
+{{ end -}}
+
+{{ $mgmt_allow_cidrs := $policy.management.mgmt_allow_cidrs }}
+{{ range $index, $cidr := $mgmt_allow_cidrs }}
+    allow  {{$cidr}};
+{{ end -}}
+
+{{ $mgmt_api := (or $policy.management.mgmt_api "on") }}
+{{ if eq $mgmt_api  "on" }}
+    location /api {
+        api write=on;
+    }
+{{ end -}}
+
+}

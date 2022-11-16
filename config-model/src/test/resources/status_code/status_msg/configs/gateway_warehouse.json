@@ -1,0 +1,82 @@
+{
+  "id": "6369a89cf67ffcb560daa2a8",
+  "name": "gateway_warehouse",
+  "policy": {
+    "status_codes": {
+      "statuses": [
+        {
+          "code": 400,
+          "message": "{\"status\":400,\"message\":\"Bad request\"}\\n"
+        },
+        {
+          "code": 401,
+          "message": "{\"status\":401,\"message\":\"Unauthorized\"}\\n"
+        },
+        {
+          "code": 403,
+          "message": "{\"status\":403,\"message\":\"Forbidden\"}\\n"
+        },
+        {
+          "code": 404,
+          "message": "{\"status\":404,\"message\":\"Customized Message\"}\\n"
+        },
+        {
+          "code": 405,
+          "message": "{\"status\":405,\"message\":\"Method not allowed\"}\\n"
+        },
+        {
+          "code": 408,
+          "message": "{\"status\":408,\"message\":\"Request timeout\"}\\n"
+        },
+        {
+          "code": 413,
+          "message": "{\"status\":413,\"message\":\"Payload too large\"}\\n"
+        },
+        {
+          "code": 414,
+          "message": "{\"status\":414,\"message\":\"Request URI too large\"}\\n"
+        },
+        {
+          "code": 415,
+          "message": "{\"status\":415,\"message\":\"Unsupported media type\"}\\n"
+        },
+        {
+          "code": 426,
+          "message": "{\"status\":426,\"message\":\"HTTP request was sent to HTTPS port\"}\\n"
+        },
+        {
+          "code": 429,
+          "message": "{\"status\":429,\"message\":\"API rate limit exceeded\"}\\n"
+        },
+        {
+          "code": 429,
+          "message": "{\"status\":429,\"message\":\"API rate limit exceeded\"}\\n"
+        },
+        {
+          "code": 495,
+          "message": "{\"status\":495,\"message\":\"Client certificate authentication error\"}\\n"
+        },
+        {
+          "code": 496,
+          "message": "{\"status\":496,\"message\":\"Client certificate not presented\"}\\n"
+        },
+        {
+          "code": 497,
+          "message": "{\"status\":497,\"message\":\"HTTP request was sent to mutual TLS port\"}\\n"
+        },
+        {
+          "code": 500,
+          "message": "{\"status\":500,\"message\":\"Server error\"}\\n"
+        },
+        {
+          "code": 501,
+          "message": "{\"status\":501,\"message\":\"Not implemented\"}\\n"
+        },
+        {
+          "code": 502,
+          "message": "{\"status\":502,\"message\":\"Bad gateway\"}\\n"
+        }
+      ]
+    }
+  }
+}

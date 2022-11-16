@@ -1,0 +1,12 @@
+{{- $gateway_id := getenv "GATEWAY_IP" "6369a89cf67ffcb560daa2a8" -}}
+{{- $gateway_key := printf "/gateways/%s" $gateway_id -}}
+{{- $gateway := json (getv $gateway_key) -}}
+{{- $api_key_auth := $gateway.policy.api_key_auth -}}
+{{- $input_type := or $gateway.policy.api_key_auth.input_type "HEADER" -}}
+{{- $key_name := or $gateway.policy.api_key_auth.api_key_name "x-api-key" -}}
+map {{if eq $input_type "HEADER"}}$http_{{$key_name}}{{else}}$arg_{{$key_name}}{{end}} $api_client_name {
+    default  "";
+    {{ range $index, $api_key := $api_key_auth.api_keys }}
+    "{{$api_key.secret}}"  "{{$api_key.key}}";
+    {{- end }}
+}

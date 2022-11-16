@@ -1,0 +1,9 @@
+{
+  "id": "6369a89cf67ffcb560daa2aa",
+  "gateway_id": "6369a89cf67ffcb560daa2a8",
+  "server_id": "6369a89cf67ffcb560daa2a9",
+  "uri": "/api/warehouse/",
+  "policy": {
+    "api_key_auth": "_validate_apikey"
+  }
+}

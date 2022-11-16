@@ -1,0 +1,46 @@
+{
+  "id": "6369a89cf67ffcb560daa2aa",
+  "gateway_id": "6369a89cf67ffcb560daa2a8",
+  "server_id": "6369a89cf67ffcb560daa2a9",
+  "uri": "/api/warehouse/",
+  "policy": {
+    "logging": {
+      "access_log": {
+        "access_log_format": "escape\u003djson \u0027{\"datetime\":\"$time_iso8601\",\u0027\n                           \u0027\"remote_addr\":\"$remote_addr\",\u0027\n                           \u0027\"request\":\"$request\",\u0027\n                           \u0027\"http_x_forwarded_for\":\"$http_x_forwarded_for\",\u0027\n                           \u0027\"http_referer\":\"$http_referer\",\u0027\n                           \u0027\"request_length\":\"$request_length\",\u0027\n                           \u0027\"http_host\":\"$http_host\",\u0027\n                           \u0027\"status\":\"$status\",\u0027\n                           \u0027\"body_bytes_sent\":\"$body_bytes_sent\",\u0027\n                           \u0027\"request_time\":\"$request_time\",\u0027\n                           \u0027\"upstream_addr\":\"$upstream_addr\",\u0027\n                           \u0027\"upstream_status\":\"$upstream_status\",\u0027\n                           \u0027\"upstream_http_content_type\":\"$upstream_http_content_type\",\u0027\n                           \u0027\"upstream_response_time\":\"$upstream_response_time\",\u0027\n                           \u0027\"server_port\":\"$server_port\"\u0027\n                           \u0027}\u0027",
+        "access_log_protocol": "FILE",
+        "access_log_file_path": "/var/log/nginx/access.log"
+      },
+      "error_log": {
+        "error_log_level": "debug",
+        "error_log_protocol": "FILE",
+        "error_log_file_path": "/var/log/nginx/error.log"
+      }
+    },
+    "uri_rewrite": {
+      "uri_maps": [
+        {
+          "from": "^/api/warehouse/inventory/item/price",
+          "to": "/api/warehouse/pricing"
+        }
+      ]
+    },
+    "api_key_auth": "_validate_apikey",
+    "basic_auth": {
+      "auth_basic": "Please input Username and Password",
+      "auth_basic_user_file": "/etc/nginx/conf.d/credentials"
+    },
+    "request_valid": {
+      "client_max_body_size": "16k"
+    },
+    "rate_limit": {
+      "key": "$binary_remote_addr",
+      "zone_name": "client_ip_10rs",
+      "zone_size": "1m",
+      "rate": "10r/s",
+      "burst": 5,
+      "nodelay": false,
+      "delay_number": 0,
+      "log_level": "error"
+    }
+  }
+}

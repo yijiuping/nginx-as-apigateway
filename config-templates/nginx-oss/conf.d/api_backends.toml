@@ -1,0 +1,10 @@
+[template]
+src = "api_backends.tmpl"
+dest = "/etc/nginx/api_backends.conf"
+owner = "nginx"
+mode = "0644"
+keys = [
+  "/gateways/6369a89cf67ffcb560daa2a8",
+]
+# check_cmd = "nginx -t -c {{.src}}"
+reload_cmd = "nginx -s reload"

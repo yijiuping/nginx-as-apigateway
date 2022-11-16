@@ -1,0 +1,18 @@
+{
+  "id": "6369a8a0f67ffcb560daa2ac",
+  "gateway_id": "6369a89cf67ffcb560daa2a8",
+  "server_id": "6369a89cf67ffcb560daa2a9",
+  "group_id": "6369a89cf67ffcb560daa2aa",
+  "uri": "/api/warehouse/inventory",
+  "policy": {
+    "traffic_route": {
+      "default_upstream": "inventory"
+    },
+    "traffic_mirror": {
+      "mirror": "on",
+      "mirror_location": "/api/warehouse/inventory_mirror",
+      "mirror_request_body": "on",
+      "mirror_upstream": "inventory_mirror"
+    }
+  }
+}
