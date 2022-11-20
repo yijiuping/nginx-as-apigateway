@@ -2,7 +2,9 @@ package com.nginx.gateway;
 
 import com.google.gson.Gson;
 import com.nginx.gateway.model.*;
+import com.nginx.gateway.scenario.*;
 import com.nginx.gateway.service.EtcdService;
+import com.nginx.gateway.service.GatewayConfig;
 import com.nginx.gateway.utils.CaseHelper;
 import com.nginx.gateway.utils.SshHelper;
 import lombok.extern.slf4j.Slf4j;
@@ -59,11 +61,10 @@ public class DataDrivenTest {
     private static final Gson gson = new Gson();
 
     @Resource
-    protected EtcdService etcdService;
+    private EtcdService etcdService;
 
-    public static final String HOSTNAME = "192.168.51.26";
-    public static final String SSH_USERNAME = "root";
-    public static final String SSH_PASSWORD = "admin";
+    @Resource
+    private GatewayConfig config;
 
     @ParameterizedTest
     @ValueSource(strings = {
@@ -161,7 +162,7 @@ public class DataDrivenTest {
         if (request.getBasic_auth_username() != null) {
             credsProvider = new BasicCredentialsProvider();
             credsProvider.setCredentials(
-                    new AuthScope(HOSTNAME, 80),
+                    new AuthScope(config.getSshHost(), 80),
                     new UsernamePasswordCredentials(request.getBasic_auth_username(), request.getBasic_auth_password().toCharArray()));
         }
 
@@ -189,7 +190,7 @@ public class DataDrivenTest {
             uri = "/" + uri;
         }
 
-        String url = String.format("%s://%s:%s%s", scheme, HOSTNAME, port, uri);
+        String url = String.format("%s://%s:%s%s", scheme, config.getSshHost(), port, uri);
 
         CloseableHttpResponse response = null;
 
@@ -234,7 +235,7 @@ public class DataDrivenTest {
     }
 
     private void executeSshCommand(String cmd) throws IOException {
-        SshHelper.SshConnection conn = new SshHelper.SshConnection(HOSTNAME, SSH_USERNAME, SSH_PASSWORD);
+        SshHelper.SshConnection conn = new SshHelper.SshConnection(config.getSshHost(), config.getSshUser(), config.getSshPasswd());
         SshHelper.SshResponse response = runCommand(conn, cmd, 15);
         if (response.getReturnCode() != 0) {
             throw new RuntimeException("Failed to execute ssh:" + cmd);
@@ -265,7 +266,7 @@ public class DataDrivenTest {
                 }
             }
 
-            executeSshCommand("confd -onetime -backend etcdv3 -node http://192.168.51.26:2379");
+            executeSshCommand("confd -onetime -backend etcdv3 -node " + config.getEtcdEndpoints());
         }
     }
 

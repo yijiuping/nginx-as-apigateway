@@ -7,9 +7,9 @@ import io.etcd.jetcd.KeyValue;
 import io.etcd.jetcd.kv.GetResponse;
 import io.etcd.jetcd.options.GetOption;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
+import javax.annotation.Resource;
 import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
 import java.util.List;
@@ -24,11 +24,11 @@ import java.util.Map;
 @Service
 public class EtcdService {
 
-    @Value("${etcd.endpoints: http://127.0.0.1:2379}")
-    private String endpoints;
+    @Resource
+    private GatewayConfig config;
 
     public Client getEtcdClient() {
-        return Client.builder().endpoints(endpoints).build();
+        return Client.builder().endpoints(config.getEtcdEndpoints()).build();
     }
 
     public void put(String key, String value) {

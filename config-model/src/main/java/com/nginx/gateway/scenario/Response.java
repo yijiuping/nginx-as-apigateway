@@ -1,4 +1,4 @@
-package com.nginx.gateway.model;
+package com.nginx.gateway.scenario;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;

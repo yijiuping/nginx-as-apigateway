@@ -7,7 +7,7 @@
 #
 {{ $mgmt_metrics := (or $policy.management.mgmt_metrics "on") }}
 {{ if eq $mgmt_metrics  "on" }}
-js_import prometheus.js;
+js_import /etc/nginx/conf.d/prometheus.js;
 {{ end -}}
 
 server {

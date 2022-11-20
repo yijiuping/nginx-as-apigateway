@@ -178,8 +178,3 @@ server {
     return 415; # Unsupported media type
     include api_json_errors.conf;
 }
-
-# Health check result check
-match health_status {
-    status 200;
-}
