@@ -1,5 +1,5 @@
 {
-  "name": "client_conn",
+  "name": "ip_blacklist",
   "cases": [
     {
       "name": "case1",

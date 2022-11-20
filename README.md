@@ -14,23 +14,27 @@ API网关作为现代应用的流量入口，重要程度可想而知，其核�
 
 ## 配置结构设计
 根据API网关的功能特性范围，选择合适的NGINX的功能模块和配置指令实现API网关的功能，并规划扩展性和可维护性，按照功能领域划分目录结构和配置结构。
+更多细节可参考[配置设计](config-design/README.md)。
 
 ## 配置模型设计
 根据配置设计抽象出面向用户的功能配置模型，简化用户配置难度，并实现可视化、自动化配置能力。
+更多细节可参考[模型设计](config-model/README.md)。
 
 ## 配置模板开发
 基于配置设计和模型设计，使用模板语言开发配置模板，最终能实现：配置模板+配置模型+配置数据=最终配置的能力。
+更多细节可参考[模版开发](config-templates/README.md)。
 
 ## 功能集成测试
 
 实现基于配置模型的自动化数据驱动测试能力，可批量自动化回归验证API网关的功能正确性。
+更多细节可参考[模版开发](config-templates/README.md)。
 
 ## 项目结构
 * config-design: 基于NGINX的API网关配置设计；
 * config-model：基于Java实现的配置模型参考，可被视为API网关的管理面；
 * config-templates：基于Go Template和Confd实现的API网关配置模板；
-* backend-demo：基于Springboot实现的后端服务测试服务；
+* backend-demo：基于Springboot实现的后端测试服务；
 
 ## 集成测试依赖
-* etcd：配置数据存储与推送，基于v3测试；
-* confd：监听etcd中配置变化，并执行配置模板渲染NGINX配置；
+* etcd：配置数据存储与推送，基于v3测试，[简单配置参考](/docs/etcd-setup.md)；
+* confd：监听etcd中配置变化，并执行配置模板渲染NGINX配置，[简单配置参考](/docs/confd-setup.md)；
