@@ -1,8 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <configuration scan="true" scanPeriod="10 seconds">
-    <springProperty name="logPath" scope="context" source="sfengine.logs.path" defaultValue="../logs"/>
-    <property name="LOG_HOME" value="${logPath}"/>
+    <property name="LOG_HOME" value="/Users/jiyi/Documents/GitHub/nginx-as-apigateway/logs"/>
 
     <appender name="FILEINFO" class="ch.qos.logback.core.rolling.RollingFileAppender">
         <file>${LOG_HOME}/nginx-as-apigateway.log</file>
