@@ -4,7 +4,7 @@ package com.nginx;
 //import org.springframework.boot.test.context.SpringBootTest;
 
 //@SpringBootTest
-//class SfengineApplicationTests {
+//class BackendApplicationTests {
 //
 //    @Test
 //    void contextLoads() {

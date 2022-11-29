@@ -1,5 +1,5 @@
 {
-  "name": "client_conn",
+  "name": "rate_limit_location",
   "cases": [
     {
       "name": "case1",
@@ -11,6 +11,18 @@
       },
       "response": {
         "status": "200"
+      }
+    },
+    {
+      "name": "case2",
+      "request": {
+        "scheme": "http",
+        "port": "80",
+        "method": "GET",
+        "uri": "/api/warehouse/inventory"
+      },
+      "response": {
+        "status": "429"
       }
     }
   ]
