@@ -1,13 +1,13 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <configuration scan="true" scanPeriod="10 seconds">
-    <springProperty name="logPath" scope="context" source="sfengine.logs.path" defaultValue="../logs"/>
+    <springProperty name="logPath" scope="context" source="logs.path" defaultValue="../logs"/>
     <property name="LOG_HOME" value="${logPath}"/>
 
     <appender name="FILEINFO" class="ch.qos.logback.core.rolling.RollingFileAppender">
         <file>${LOG_HOME}/sfengine.log</file>
         <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
-            <fileNamePattern>${LOG_HOME}/log-sfengine-%d{yyyy-MM-dd}.%i.log</fileNamePattern>
+            <fileNamePattern>${LOG_HOME}/backend-%d{yyyy-MM-dd}.%i.log</fileNamePattern>
             <timeBasedFileNamingAndTriggeringPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedFNATP">
                 <maxFileSize>200MB</maxFileSize>
             </timeBasedFileNamingAndTriggeringPolicy>

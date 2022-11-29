@@ -1,5 +1,5 @@
 {
-  "name": "client_conn",
+  "name": "apikey_auth",
   "cases": [
     {
       "name": "case1",

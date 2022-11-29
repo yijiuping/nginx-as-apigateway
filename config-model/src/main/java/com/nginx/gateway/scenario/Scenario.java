@@ -14,5 +14,5 @@ public class Scenario {
     private String name;
     private List<Case> cases;
     private Action pre_action;
-    private Action post_action = Action.CLEAR_ETCD_CONFIG;
+    private Action post_action;
 }
