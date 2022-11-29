@@ -244,30 +244,32 @@ public class DataDrivenTest {
 
     private void writeGatewayConfig(String scenarioPath) throws IOException {
         List<File> configs = CaseHelper.getCaseDataFiles(scenarioPath + "/configs");
-        if (!CollectionUtils.isEmpty(configs)) {
-            for (File config : configs) {
-                FileReader reader = new FileReader(config);
-
-                if (config.getName().startsWith("gateway_")) {
-                    Gateway gateway = gson.fromJson(reader, Gateway.class);
-                    etcdService.put(gateway.key(), gson.toJson(gateway));
-                } else if (config.getName().startsWith("server_")) {
-                    Server server = gson.fromJson(reader, Server.class);
-                    etcdService.put(server.key(), gson.toJson(server));
-                } else if (config.getName().startsWith("upstream_")) {
-                    Upstream upstream = gson.fromJson(reader, Upstream.class);
-                    etcdService.put(upstream.key(), gson.toJson(upstream));
-                } else if (config.getName().startsWith("group_")) {
-                    LocationGroup group = gson.fromJson(reader, LocationGroup.class);
-                    etcdService.put(group.key(), gson.toJson(group));
-                } else if (config.getName().startsWith("location_")) {
-                    Location location = gson.fromJson(reader, Location.class);
-                    etcdService.put(location.key(), gson.toJson(location));
-                }
-            }
-
-            executeSshCommand("confd -onetime -backend etcdv3 -node " + config.getEtcdEndpoints());
+        if (CollectionUtils.isEmpty(configs)) {
+            return;
         }
+
+        for (File config : configs) {
+            FileReader reader = new FileReader(config);
+
+            if (config.getName().startsWith("gateway_")) {
+                Gateway gateway = gson.fromJson(reader, Gateway.class);
+                etcdService.put(gateway.key(), gson.toJson(gateway));
+            } else if (config.getName().startsWith("server_")) {
+                Server server = gson.fromJson(reader, Server.class);
+                etcdService.put(server.key(), gson.toJson(server));
+            } else if (config.getName().startsWith("upstream_")) {
+                Upstream upstream = gson.fromJson(reader, Upstream.class);
+                etcdService.put(upstream.key(), gson.toJson(upstream));
+            } else if (config.getName().startsWith("group_")) {
+                LocationGroup group = gson.fromJson(reader, LocationGroup.class);
+                etcdService.put(group.key(), gson.toJson(group));
+            } else if (config.getName().startsWith("location_")) {
+                Location location = gson.fromJson(reader, Location.class);
+                etcdService.put(location.key(), gson.toJson(location));
+            }
+        }
+
+        executeSshCommand("confd -onetime -backend etcdv3 -node " + config.getEtcdEndpoints());
     }
 
     private void clearGatewayConfig() {
