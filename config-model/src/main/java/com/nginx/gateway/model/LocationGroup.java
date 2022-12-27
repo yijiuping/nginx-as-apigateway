@@ -1,7 +1,6 @@
 package com.nginx.gateway.model;
 
 import com.nginx.gateway.model.common.Key;
-import lombok.Builder;
 import lombok.Data;
 
 /**
@@ -9,7 +8,6 @@ import lombok.Data;
  *
  * @author Jiuping Yi
  */
-@Builder
 @Data
 @Key(format = "/gateways/<gateway_id>/http/servers/<server_id>/groups/<group_id>")
 public class LocationGroup {
@@ -24,11 +22,6 @@ public class LocationGroup {
      * API的URI地址，支持精确配置与正则配置
      */
     private String uri;
-
-//    /**
-//     * API 列表
-//     */
-//    private List<Location> locations;
 
     /**
      * API分组或分域下API的通用策略

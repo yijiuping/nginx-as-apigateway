@@ -1,6 +1,5 @@
 package com.nginx.gateway.model;
 
-import lombok.Builder;
 import lombok.Data;
 
 /**
@@ -8,7 +7,7 @@ import lombok.Data;
  *
  * @author Jiuping Yi
  */
-@Builder
+
 @Data
 public class Member {
 

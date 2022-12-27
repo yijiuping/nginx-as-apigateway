@@ -16,7 +16,6 @@ import lombok.Data;
  *
  * @author Jiuping Yi
  */
-//@Builder
 @Data
 public class ConnLimit {
 

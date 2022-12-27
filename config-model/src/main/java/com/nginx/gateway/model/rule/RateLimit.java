@@ -1,6 +1,5 @@
 package com.nginx.gateway.model.rule;
 
-import lombok.Builder;
 import lombok.Data;
 
 /**
@@ -17,7 +16,6 @@ import lombok.Data;
  *
  * @author Jiuping Yi
  */
-@Builder
 @Data
 public class RateLimit {
 

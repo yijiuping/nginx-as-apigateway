@@ -1,6 +1,5 @@
 package com.nginx.gateway.model.rule;
 
-import lombok.Builder;
 import lombok.Data;
 
 import java.util.List;
@@ -10,13 +9,14 @@ import java.util.List;
  *
  * @author Jiuping Yi
  */
-@Builder
 @Data
 public class StatusCode {
 
+    /**
+     * 状态码列表
+     */
     private List<Status> statuses;
 
-    @Builder
     @Data
     public static class Status {
         /**

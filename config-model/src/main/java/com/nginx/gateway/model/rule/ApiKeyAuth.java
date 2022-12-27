@@ -1,17 +1,14 @@
 package com.nginx.gateway.model.rule;
 
-import lombok.Builder;
 import lombok.Data;
 
 import java.util.List;
-import java.util.Map;
 
 /**
  * <p>API Key认证策略</p>
  *
  * @author Jiuping Yi
  */
-@Builder
 @Data
 public class ApiKeyAuth {
 
@@ -44,7 +41,6 @@ public class ApiKeyAuth {
         ARGUMENT // 从Query Param中获取
     }
 
-    @Builder
     @Data
     public static class ApiKey {
         private String key;

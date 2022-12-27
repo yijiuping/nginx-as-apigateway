@@ -2,7 +2,6 @@ package com.nginx.gateway.model;
 
 import com.nginx.gateway.model.common.Header;
 import com.nginx.gateway.model.rule.*;
-import lombok.Builder;
 import lombok.Data;
 
 import java.util.Map;
@@ -12,7 +11,6 @@ import java.util.Map;
  *
  * @author Jiuping Yi
  */
-@Builder
 @Data
 public class LocationPolicy {
 

@@ -1,14 +1,12 @@
 package com.nginx.gateway.model.common;
 
-import lombok.Builder;
 import lombok.Data;
 
 /**
- * <p>响应头操作</p>
+ * <p>请求或响应头操作</p>
  *
  * @author Jiuping Yi
  */
-@Builder
 @Data
 public class Header {
 
@@ -27,18 +25,40 @@ public class Header {
      */
     private String[] remove;
 
-    @Builder
+    /**
+     * 新增头操作
+     */
     @Data
     public static class Add {
+        /**
+         * 头名称
+         */
         private String name;
+
+        /**
+         * 头值
+         */
         private String value;
+
+        /**
+         * 是否总是添加
+         */
         private Boolean always;
     }
 
-    @Builder
+    /**
+     * 更新头操作
+     */
     @Data
     public static class Set {
+        /**
+         * 头名称
+         */
         private String name;
+
+        /**
+         * 头值
+         */
         private String value;
     }
 }

@@ -1,17 +1,14 @@
 package com.nginx.gateway.model.rule;
 
-import lombok.Builder;
 import lombok.Data;
 
 import java.util.List;
-import java.util.Map;
 
 /**
  * <p>Credentials</p>
  *
  * @author Jiuping Yi
  */
-@Builder
 @Data
 public class Credentials {
 
@@ -20,7 +17,6 @@ public class Credentials {
      */
     private List<User> users;
 
-    @Builder
     @Data
     public static class User {
         private String username;

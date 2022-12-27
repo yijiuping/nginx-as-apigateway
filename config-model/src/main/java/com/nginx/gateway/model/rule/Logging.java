@@ -1,6 +1,5 @@
 package com.nginx.gateway.model.rule;
 
-import lombok.Builder;
 import lombok.Data;
 
 /**
@@ -8,7 +7,6 @@ import lombok.Data;
  *
  * @author Jiuping Yi
  */
-@Builder
 @Data
 public class Logging {
 
@@ -19,7 +17,7 @@ public class Logging {
     /**
      * 访问日志策略
      */
-    @Builder
+
     @Data
     public static class AccessLog {
         /**
@@ -51,7 +49,7 @@ public class Logging {
     /**
      * 错误日志策略
      */
-    @Builder
+
     @Data
     public static class ErrorLog {
 

@@ -1,7 +1,6 @@
 package com.nginx.gateway.model;
 
 import com.nginx.gateway.model.common.Key;
-import lombok.Builder;
 import lombok.Data;
 
 /**
@@ -9,7 +8,6 @@ import lombok.Data;
  *
  * @author Jiuping Yi
  */
-@Builder
 @Data
 @Key(format = "/gateways/<gateway_id>")
 public class Gateway {

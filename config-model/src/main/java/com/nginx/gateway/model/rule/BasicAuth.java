@@ -1,6 +1,5 @@
 package com.nginx.gateway.model.rule;
 
-import lombok.Builder;
 import lombok.Data;
 
 /**
@@ -8,7 +7,6 @@ import lombok.Data;
  *
  * @author Jiuping Yi
  */
-@Builder
 @Data
 public class BasicAuth {
 
@@ -20,6 +18,6 @@ public class BasicAuth {
     /**
      * 用户名和密码配置文件地址
      */
-    private String auth_basic_user_file = "/oss/etc/nginx/conf.d/htpasswd";
+    private String auth_basic_user_file = "/etc/nginx/conf.d/htpasswd";
 
 }

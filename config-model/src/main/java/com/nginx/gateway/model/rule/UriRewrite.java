@@ -1,6 +1,5 @@
 package com.nginx.gateway.model.rule;
 
-import lombok.Builder;
 import lombok.Data;
 
 import java.util.List;
@@ -10,7 +9,6 @@ import java.util.List;
  *
  * @author Jiuping Yi
  */
-@Builder
 @Data
 public class UriRewrite {
 
@@ -24,7 +22,6 @@ public class UriRewrite {
      */
     private String rewrite_log = "off";
 
-    @Builder
     @Data
     public static class UriMap {
         private String from;

@@ -8,7 +8,6 @@ import lombok.Data;
  *
  * @author Jiuping Yi
  */
-//@Builder
 @Data
 public class LoadBalance {
 
@@ -20,6 +19,6 @@ public class LoadBalance {
     /**
      * Hash和一致性hash算法时的key
      */
-    private String hash_key="$remote_addr";
+    private String hash_key = "$remote_addr";
 
 }

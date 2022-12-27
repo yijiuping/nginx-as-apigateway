@@ -1,7 +1,6 @@
 package com.nginx.gateway.model;
 
 import com.nginx.gateway.model.common.Key;
-import lombok.Builder;
 import lombok.Data;
 
 import java.util.List;
@@ -11,7 +10,6 @@ import java.util.List;
  *
  * @author Jiuping Yi
  */
-@Builder
 @Data
 @Key(format = "/gateways/<gateway_id>/http/servers/<server_id>/upstreams/<upstream_id>")
 public class Upstream {

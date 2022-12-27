@@ -4,7 +4,6 @@ import com.nginx.gateway.model.rule.HealthCheck;
 import com.nginx.gateway.model.rule.LoadBalance;
 import com.nginx.gateway.model.rule.SessionSticky;
 import com.nginx.gateway.model.rule.UpstreamConn;
-import lombok.Builder;
 import lombok.Data;
 
 /**
@@ -12,7 +11,6 @@ import lombok.Data;
  *
  * @author Jiuping Yi
  */
-@Builder
 @Data
 public class UpstreamPolicy {
 
